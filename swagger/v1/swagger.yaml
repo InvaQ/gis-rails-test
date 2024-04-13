@@ -38,7 +38,126 @@ components:
       required:
         - ip
         - url
+    SignUpRequest:
+      type: object
+      required:
+        - user
+      properties:
+        user:
+          type: object
+          required:
+            - email
+            - password
+          properties:
+            email:
+              type: string
+              format: email
+            password:
+              type: string
+    SignUpResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+            email:
+              type: string
+            created_at:
+              type: string
+            updated_at:
+              type: string
+        token:
+          type: string
+    LoginRequest:
+      type: object
+      required:
+        - user
+      properties:
+        user:
+          type: object
+          required:
+            - email
+            - password
+          properties:
+            email:
+              type: string
+              format: email
+            password:
+              type: string
+    LoginResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+            email:
+              type: string
+            created_at:
+              type: string
+            updated_at:
+              type: string
+        token:
+          type: string
 paths:
+  /auth/signup:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignUpResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /auth/login:
+    post:
+      summary: Log in a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: User logged in successfully
+          headers:
+            Authorization:
+              description: JWT token
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
   /api/v1/locations:
     get:
       summary: Retrieve a list of locations
@@ -78,14 +197,54 @@ paths:
                 $ref: '#/components/schemas/Location'
         '422':
           description: Unprocessable entity
-  /api/v1/locations/{id}:
+  "/api/v1/locations/{ip}":
+    get:
+      summary: Retrieve a location by IP
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: ip
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '404':
+          description: Location not found
+  "/api/v1/locations/{url}":
+    get:
+      summary: Retrieve a location by URL
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: url
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '404':
+          description: Location not found
+  "/api/v1/locations/{id}":
     get:
       summary: Retrieve a location by ID, IP, or URL. Use identifier as /id or IPaddr as /?ip=1.2.3.4 or URL as /?url=https://google.com
       security:
         - bearerAuth: []
       parameters:
         - in: path
-          name: key
+          name: id
           required: true
           schema:
             type: string

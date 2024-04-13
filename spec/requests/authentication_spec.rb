@@ -6,9 +6,9 @@ RSpec.describe "Authentication", type: :request do
     @headers = { 'CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json' }
   end
 
-  describe "POST /signup" do
+  describe "POST /auth/signup" do
     it "creates a new user" do
-      post '/signup', params: @params, headers: @headers
+      post '/auth/signup', params: @params, headers: @headers
       expect(response).to have_http_status(:created)
       expect(response).to include('authorization')
     end
@@ -19,20 +19,20 @@ RSpec.describe "Authentication", type: :request do
       User.create(email: 'test@example.com', password: 'password')
     end
 
-    describe "POST /login" do
+    describe "POST /auth/login" do
       it "authenticates the user and returns auth token" do
-        post '/login', params: @params, headers: @headers
+        post '/auth/login', params: @params, headers: @headers
         expect(response).to have_http_status(:ok)
         expect(response).to include('authorization')
       end
     end
 
-    describe "DELETE /logout" do
+    describe "DELETE /auth/logout" do
       it "logs out the user" do
-        post '/login', params: @params, headers: @headers
+        post '/auth/login', params: @params, headers: @headers
         auth_token = response.headers['authorization']
 
-        delete '/logout', headers: { 'Authorization' => auth_token }
+        delete '/auth/logout', headers: { 'Authorization' => auth_token }
         expect(response).to have_http_status(:ok)
       end
     end

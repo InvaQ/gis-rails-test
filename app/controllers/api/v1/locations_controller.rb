@@ -1,5 +1,5 @@
 class Api::V1::LocationsController < Api::BaseController
-  before_action :set_location, only: %i[show update destroy]
+  before_action :set_location, only: %i[update destroy]
 
   # GET /locations
   def index
@@ -10,16 +10,26 @@ class Api::V1::LocationsController < Api::BaseController
 
   # GET /locations/1
   def show
+    @location =
+      if params[:ip]
+        Location.find_by(ip: params[:ip])
+      elsif params[:url]
+        LocationService.find_or_create_location_by_url(params[:url])
+      else
+        Location.find_by(id: params[:id])
+      end
+
     @location ? (render json: @location) : (render json: { error: 'Location not found.' }, status: :not_found)
   end
 
   # POST /locations
   def create
-    @location = Location.new(location_params)
-    if @location.save
+    @location = LocationService.create_location_by(location_params[:ip], location_params[:url])
+
+    if @location.persisted?
       render json: @location, status: :created
     else
-      render json: @location.errors, status: :unprocessable_entity
+      render json: @location&.errors, status: :unprocessable_entity
     end
   end
 
@@ -46,18 +56,7 @@ class Api::V1::LocationsController < Api::BaseController
   private
 
   def set_location
-    @location =
-      if params[:ip]
-        Location.find_by(ip: params[:ip])
-      elsif params[:id]
-        Location.find_by(id: params[:id])
-      elsif params[:url]
-        if params[:action] == 'show'
-          LocationService.find_or_create_location_by_url(params[:url])
-        else
-          LocationService.find_location_by_url(params[:url])
-        end
-      end
+    @location = Location.find_by(id: params[:id])
   end
 
   def location_params
