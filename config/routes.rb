@@ -13,4 +13,10 @@ Rails.application.routes.draw do
 
   get "up" => "rails/health#show", as: :rails_health_check
 
+  namespace :api, defaults: { format: :json } do
+    namespace :v1 do
+      get 'locations', to: 'locations#show', constraints: lambda { |request| request.params['url'] || request.params['ip'] }
+      resources :locations, only: [:index, :show, :create, :update, :destroy]
+    end
+  end
 end

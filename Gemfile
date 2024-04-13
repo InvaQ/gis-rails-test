@@ -33,9 +33,11 @@ group :development, :test do
   gem 'pry'
   gem "annotate"
   gem "rspec-rails"
-  gem "rspec-mocks"
+  gem 'webmock'
   gem "shoulda-matchers"
   gem 'rswag-specs'
+  gem 'dotenv-rails'
+  gem 'factory_bot_rails'
 end
 
 group :development do

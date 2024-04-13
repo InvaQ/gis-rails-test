@@ -1,0 +1,142 @@
+openapi: 3.0.1
+info:
+  title: GeoLocation API
+  version: 1.0.0
+servers:
+  - url: http://{defaultHost}
+    variables:
+      defaultHost:
+        default: localhost:3000
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token
+  schemas:
+    Location:
+      type: object
+      properties:
+        id:
+          type: integer
+        ip:
+          type: string
+        url:
+          type: string
+      required:
+        - id
+        - ip
+        - url
+    LocationInput:
+      type: object
+      properties:
+        ip:
+          type: string
+        url:
+          type: string
+      required:
+        - ip
+        - url
+paths:
+  /api/v1/locations:
+    get:
+      summary: Retrieve a list of locations
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Limit the number of locations returned
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location'
+    post:
+      summary: Create a new location
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationInput'
+      responses:
+        '201':
+          description: Location created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '422':
+          description: Unprocessable entity
+  /api/v1/locations/{id}:
+    get:
+      summary: Retrieve a location by ID, IP, or URL. Use identifier as /id or IPaddr as /?ip=1.2.3.4 or URL as /?url=https://google.com
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '404':
+          description: Location not found
+    put:
+      summary: Update a location
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationInput'
+      responses:
+        '200':
+          description: Location updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '404':
+          description: Location not found
+        '422':
+          description: Unprocessable entity
+    delete:
+      summary: Delete a location
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Location deleted successfully
+        '404':
+          description: Location not found
