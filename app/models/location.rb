@@ -22,7 +22,6 @@
 #  updated_at     :datetime         not null
 #
 class Location < ApplicationRecord
-  
   geocoded_by :ip do |obj, results|
     if (geo = results.first)
       obj.latitude = geo.latitude
@@ -41,8 +40,8 @@ class Location < ApplicationRecord
       errors.add(:ip, 'is invalid or could not be geocoded')
     end
   end
-  
-  validates :ip, format: { :with => Resolv::AddressRegex }
+
+  validates :ip, format: { with: Resolv::AddressRegex }
   validates :ip, presence: true, uniqueness: true
-  after_validation :geocode, if: ->(obj){ obj.ip_changed? && obj.errors.empty? }
+  after_validation :geocode, if: ->(obj) { obj.ip_changed? && obj.errors.empty? }
 end

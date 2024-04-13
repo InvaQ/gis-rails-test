@@ -5,6 +5,5 @@ FactoryBot.define do
     latitude { 34.052363 }
     longitude { -118.256551 }
     location { {} }
-
   end
 end

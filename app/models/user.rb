@@ -18,7 +18,7 @@ class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   validates :email, uniqueness: { case_sensitive: false }, presence: true
-  validates :password,  presence: true, length: {in: 6..18, messsage: "Password must be between 6 and 18 characters."}
+  validates :password, presence: true, length: { in: 6..18, messsage: "Password must be between 6 and 18 characters." }
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,

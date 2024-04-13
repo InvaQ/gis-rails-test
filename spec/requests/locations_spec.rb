@@ -16,21 +16,21 @@ RSpec.describe "/locations", type: :request do
   # This should return the minimal set of attributes required to create a valid
   # Location. As you add validations to Location, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
+  let(:valid_attributes) do
     skip("Add a hash of attributes valid for your model")
-  }
+  end
 
-  let(:invalid_attributes) {
+  let(:invalid_attributes) do
     skip("Add a hash of attributes invalid for your model")
-  }
+  end
 
   # This should return the minimal set of values that should be in the headers
   # in order to pass any filters (e.g. authentication) defined in
   # LocationsController, or in your router and rack
   # middleware. Be sure to keep this updated too.
-  let(:valid_headers) {
+  let(:valid_headers) do
     {}
-  }
+  end
 
   describe "GET /index" do
     it "renders a successful response" do
@@ -51,10 +51,10 @@ RSpec.describe "/locations", type: :request do
   describe "POST /create" do
     context "with valid parameters" do
       it "creates a new Location" do
-        expect {
+        expect do
           post api_v1_locations_url,
                params: { location: valid_attributes }, headers: valid_headers, as: :json
-        }.to change(Location, :count).by(1)
+        end.to change(Location, :count).by(1)
       end
 
       it "renders a JSON response with the new location" do
@@ -67,10 +67,10 @@ RSpec.describe "/locations", type: :request do
 
     context "with invalid parameters" do
       it "does not create a new Location" do
-        expect {
+        expect do
           post api_v1_locations_url,
                params: { location: invalid_attributes }, as: :json
-        }.to change(Location, :count).by(0)
+        end.to change(Location, :count).by(0)
       end
 
       it "renders a JSON response with errors for the new location" do
@@ -84,9 +84,9 @@ RSpec.describe "/locations", type: :request do
 
   describe "PATCH /update" do
     context "with valid parameters" do
-      let(:new_attributes) {
+      let(:new_attributes) do
         skip("Add a hash of attributes valid for your model")
-      }
+      end
 
       it "updates the requested location" do
         location = Location.create! valid_attributes
@@ -119,9 +119,9 @@ RSpec.describe "/locations", type: :request do
   describe "DELETE /destroy" do
     it "destroys the requested location" do
       location = Location.create! valid_attributes
-      expect {
+      expect do
         delete location_url(location), headers: valid_headers, as: :json
-      }.to change(Location, :count).by(-1)
+      end.to change(Location, :count).by(-1)
     end
   end
 end

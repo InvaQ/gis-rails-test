@@ -26,7 +26,7 @@ RSpec.describe "Authentication", type: :request do
         expect(response).to include('authorization')
       end
     end
-  
+
     describe "DELETE /logout" do
       it "logs out the user" do
         post '/login', params: @params, headers: @headers

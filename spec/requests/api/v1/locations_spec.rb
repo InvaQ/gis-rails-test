@@ -22,23 +22,22 @@ RSpec.describe Api::V1::LocationsController, type: :controller do
   before do
     user = create(:user)
     authenticated_header(request, user)
-    Geocoder.configure(:lookup => :test, ip_lookup: :test)
+    Geocoder.configure(lookup: :test, ip_lookup: :test)
     Geocoder::Lookup::Test.add_stub(
-        "8.8.8.8", [{
-                                "ip"    => '8.8.8.8',
-                                "hostname"    => 'blablabla.com',
-                                "latitude"    => 34.052363,
-                                "longitude"    => -118.256551,
-                                "address"      => 'Los Angeles, CA, USA',
-                                "state"        => 'California',
-                                "state_code"   => 'CA',
-                                "country_name"      => 'United States',
+      "8.8.8.8", [{
+                                "ip" => '8.8.8.8',
+                                "hostname" => 'blablabla.com',
+                                "latitude" => 34.052363,
+                                "longitude" => -118.256551,
+                                "address" => 'Los Angeles, CA, USA',
+                                "state" => 'California',
+                                "state_code" => 'CA',
+                                "country_name" => 'United States',
                                 "zip" => 'AV3 Q3R',
                                 "country_code" => 'US',
                                 "location" => {},
-                                "data" => {},
-                            }],
-
+                                "data" => {}
+                            }]
     )
     allow(LocationService).to receive(:find_or_create_location_by_url).and_return(location)
     allow(LocationService).to receive(:find_location_by_url).and_return(location)
@@ -53,7 +52,7 @@ RSpec.describe Api::V1::LocationsController, type: :controller do
     it "returns an array of locations" do
       location
       get :index, params: { limit: 10 }
-      expect(JSON.parse(response.body).size).to eq(1)
+      expect(response.parsed_body.size).to eq(1)
     end
   end
 
@@ -67,39 +66,38 @@ RSpec.describe Api::V1::LocationsController, type: :controller do
       allow(LocationService).to receive(:find_or_create_location_by_url).and_return(nil)
       get :show, params: { url: 'https://nonexistent.com' }
       expect(response).to have_http_status(:not_found)
-      expect(JSON.parse(response.body)["error"]).to eq("Location not found.")
+      expect(response.parsed_body["error"]).to eq("Location not found.")
     end
   end
 
   describe "POST #create" do
     context "with valid parameters" do
       it "does not create a new location because ip already taken" do
-        expect {
+        expect do
           post :create, params: { location: valid_attributes }
-        }.to change(Location, :count).by(0)
+        end.to change(Location, :count).by(0)
         expect(response).to have_http_status(:unprocessable_entity)
       end
       it "creates a new location" do
         Geocoder::Lookup::Test.add_stub(
           "9.9.9.9", [{
-                                  "ip"    => '9.9.9.9',
-                                  "hostname"    => 'blablabla.com',
-                                  "latitude"    => 34.052363,
-                                  "longitude"    => -118.256551,
-                                  "address"      => 'Los Angeles, CA, USA',
-                                  "state"        => 'California',
-                                  "state_code"   => 'CA',
-                                  "country_name"      => 'United States',
+                                  "ip" => '9.9.9.9',
+                                  "hostname" => 'blablabla.com',
+                                  "latitude" => 34.052363,
+                                  "longitude" => -118.256551,
+                                  "address" => 'Los Angeles, CA, USA',
+                                  "state" => 'California',
+                                  "state_code" => 'CA',
+                                  "country_name" => 'United States',
                                   "zip" => 'AV3 Q3R',
                                   "country_code" => 'US',
                                   "location" => {},
-                                  "data" => {},
-                              }],
-  
+                                  "data" => {}
+                              }]
         )
-        expect {
+        expect do
           post :create, params: { location: { ip: '9.9.9.9', url: 'https://example1.com' } }
-        }.to change(Location, :count).by(1)
+        end.to change(Location, :count).by(1)
         expect(response).to have_http_status(:created)
       end
     end
@@ -117,20 +115,19 @@ RSpec.describe Api::V1::LocationsController, type: :controller do
       it "updates the location" do
         Geocoder::Lookup::Test.add_stub(
           "111.22.33.44", [{
-                                  "ip"    => '8.8.8.8',
-                                  "hostname"    => 'blablabla.com',
-                                  "latitude"    => 35.052363,
-                                  "longitude"    => -52.256551,
-                                  "address"      => 'Las Vegas, NV, USA',
-                                  "state"        => 'Nevada',
-                                  "state_code"   => 'CA',
-                                  "country_name"      => 'United States',
+                                  "ip" => '8.8.8.8',
+                                  "hostname" => 'blablabla.com',
+                                  "latitude" => 35.052363,
+                                  "longitude" => -52.256551,
+                                  "address" => 'Las Vegas, NV, USA',
+                                  "state" => 'Nevada',
+                                  "state_code" => 'CA',
+                                  "country_name" => 'United States',
                                   "zip" => 'AV3 Q3R',
                                   "country_code" => 'US',
                                   "location" => {},
-                                  "data" => {},
-                              }],
-  
+                                  "data" => {}
+                              }]
         )
         patch :update, params: { id: location.id, location: { ip: '111.22.33.44' } }
         location.reload
@@ -151,7 +148,7 @@ RSpec.describe Api::V1::LocationsController, type: :controller do
     it "destroys the requested location" do
       delete :destroy, params: { id: location.id }
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body)["message"]).to eq("Location deleted successfully.")
+      expect(response.parsed_body["message"]).to eq("Location deleted successfully.")
     end
 
     it "returns unprocessable entity status when location deletion fails" do
@@ -160,4 +157,3 @@ RSpec.describe Api::V1::LocationsController, type: :controller do
     end
   end
 end
-  

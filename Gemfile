@@ -11,7 +11,7 @@ gem "pg", "~> 1.1"
 gem "puma", ">= 5.0"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem "tzinfo-data", platforms: %i[windows jruby]
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
@@ -29,7 +29,7 @@ gem "rswag-ui"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri windows ]
+  gem "debug", platforms: %i[mri windows]
   gem 'pry'
   gem "annotate"
   gem "rspec-rails"
@@ -47,4 +47,3 @@ group :development do
   gem "rubocop-rails", "~> 2.24", require: false
   gem "rubocop-rspec", "~> 2.29", require: false
 end
-

@@ -1,16 +1,17 @@
 class LocationService
   attr_reader :base_url, :uri
-  
+
   class << self
     def find_location_by_url(url)
       service = new(url)
-      return nil unless service
+      return nil unless service.base_url
 
       service.find_by_url
     end
+
     def find_or_create_location_by_url(url)
       service = new(url)
-      return nil unless service
+      return nil unless service.base_url
 
       service.find_or_create_location_by_url
     end
@@ -18,11 +19,9 @@ class LocationService
 
   def initialize(url)
     @uri = URI.parse(url)
-    return nil unless valid_url?
-
-    @base_url = URI.join(url, "/").to_s
+    @base_url = valid_url? ? URI.join(url, "/").to_s : nil
   end
-  
+
   def find_or_create_location_by_url
     location = find_by_url
 
@@ -38,7 +37,6 @@ class LocationService
     Location.find_by(url: base_url)
   end
 
-
   private
 
   def valid_url?
@@ -48,14 +46,13 @@ class LocationService
     false
   end
 
-  def fetch_ip_address   
+  def fetch_ip_address
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = (uri.scheme == 'https')
     request = Net::HTTP::Head.new(uri)
     response = http.request(request)
 
-    return response.remote_ip if response.is_a?(Net::HTTPSuccess)
-
+    response.remote_ip if response.is_a?(Net::HTTPSuccess)
   rescue Net::OpenTimeout, Net::ReadTimeout, SocketError => e
     Rails.logger.error "Network error while fetching IP address: #{e.message}"
     nil

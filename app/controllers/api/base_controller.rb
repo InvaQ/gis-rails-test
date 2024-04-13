@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Api::BaseController < ApplicationController
   before_action :authenticate_user!
 
@@ -6,12 +7,12 @@ class Api::BaseController < ApplicationController
 
   def not_found
     render json: {
-      'errors': [
+      errors: [
         {
-          'status': '404',
-          'title': 'Not Found'
+          status: '404',
+          title: 'Not Found'
         }
       ]
-    }, status: 404
+    }, status: :not_found
   end
 end

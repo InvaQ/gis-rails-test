@@ -12,23 +12,22 @@ RSpec.describe LocationService, type: :service do
     request = double('Net::HTTP::Head')
     response = double('Net::HTTPResponse')
 
-    Geocoder.configure(:lookup => :test, ip_lookup: :test)
+    Geocoder.configure(lookup: :test, ip_lookup: :test)
     Geocoder::Lookup::Test.add_stub(
-        "8.8.8.8", [{
-                                "ip"    => '8.8.8.8',
-                                "hostname"    => 'blablabla.com',
-                                "latitude"    => 34.052363,
-                                "longitude"    => -118.256551,
-                                "address"      => 'Los Angeles, CA, USA',
-                                "state"        => 'California',
-                                "state_code"   => 'CA',
-                                "country_name"      => 'United States',
+      "8.8.8.8", [{
+                                "ip" => '8.8.8.8',
+                                "hostname" => 'blablabla.com',
+                                "latitude" => 34.052363,
+                                "longitude" => -118.256551,
+                                "address" => 'Los Angeles, CA, USA',
+                                "state" => 'California',
+                                "state_code" => 'CA',
+                                "country_name" => 'United States',
                                 "zip" => 'AV3 Q3R',
                                 "country_code" => 'US',
                                 "location" => {},
-                                "data" => {},
-                            }],
-
+                                "data" => {}
+                            }]
     )
     allow(Net::HTTP).to receive(:new).with(uri.host, uri.port).and_return(http)
     allow(http).to receive(:use_ssl=).with(true)
@@ -78,5 +77,4 @@ RSpec.describe LocationService, type: :service do
       end
     end
   end
-
 end
