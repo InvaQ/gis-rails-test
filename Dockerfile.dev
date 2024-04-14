@@ -1,0 +1,37 @@
+# syntax = docker/dockerfile:1
+
+# Use a Ruby image with the appropriate version
+ARG RUBY_VERSION=3.3.0
+FROM ruby:$RUBY_VERSION-slim as base
+LABEL image=gis_api:latest
+
+# Define the working directory
+RUN mkdir /rails
+WORKDIR /rails
+
+# Set the development environment
+ENV RAILS_ENV="development" \
+    BUNDLE_WITHOUT="test" \
+    BUNDLE_PATH="/usr/local/bundle"
+
+# Install system dependencies
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y build-essential git libpq-dev curl postgresql-client libvips && \
+    apt-get clean && rm -rf /var/lib/apt/lists  /var/cache/apt/archives
+
+# Copy the Gemfile and Gemfile.lock into the working directory
+COPY Gemfile Gemfile.lock ./
+
+# Install gems using Bundler and clean up cache
+RUN bundle install --jobs 4 --retry 3
+
+# Copy the application code
+COPY . .
+
+# ENTRYPOINT ["/app/bin/docker-entrypoint"]
+
+# Expose the port that Rails will use
+EXPOSE 3000
+
+# Run the Rails server when the container starts
+CMD ["./bin/rails", "server", "-b", "0.0.0.0", "-p", "3000"]
