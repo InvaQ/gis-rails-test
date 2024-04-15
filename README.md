@@ -7,11 +7,7 @@ The GeoLocation API allows you to manage and retrieve location data based on IP 
 
 To get started with the GeoLocation API, ensure you have Ruby and Rails installed. Then, clone the repository and install the dependencies:
 
-```bash
-bundle install
-rails db:create
-rails db:migrate
-```
+
 
 Configuration
 To properly start the GeoLocation API, you need to set up the IPSTACK_API_KEY in the .env file:
@@ -23,6 +19,27 @@ Add the following line to the file, replacing [YOUR_API_KEY] with your actual AP
 IPSTACK_API_KEY=[YOUR_API_KEY]
 ```
 This API key is required for using the IPStack service for geolocation data.
+
+Generate secret token
+```bash
+bundle exec rails secret
+```
+And add the following line to the .env file
+```bash
+DEVISE_JWT_KEY=[generated_key]
+```
+
+## Docker-compose way
+```bash
+./bin/docker-setup.sh
+```
+or
+
+```bash
+bundle install
+rails db:create
+rails db:migrate
+```
 
 Start the Rails server:
 ```bash
